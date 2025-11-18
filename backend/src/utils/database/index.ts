@@ -17,10 +17,6 @@ export enum ExpectedReturn {
   None = 'None',
 }
 
-export interface IRecordSet<T = any> {
-  recordset: T[];
-}
-
 /**
  * @summary
  * Gets or creates database connection pool.
@@ -103,7 +99,10 @@ export async function dbRequest(
     if (resultSetNames && resultSetNames.length > 0) {
       const namedResults: Record<string, any> = {};
       resultSetNames.forEach((name, index) => {
-        namedResults[name] = result.recordsets[index] || [];
+        if (Array.isArray(result.recordsets)) {
+          const recordset = result.recordsets[index];
+          namedResults[name] = recordset || [];
+        }
       });
       return namedResults;
     }
